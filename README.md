@@ -29,7 +29,6 @@ buildable from this same source tree — see below for what it does.
 An OSC timer app that can optionally unlock a bluetooth lock that uses the ESmartLock phone app. 
 <br> A simple use case might be throwing regular keys into a lockbox secured by the bluetooth lock. 
 
-![Preview](https://raw.githubusercontent.com/ZenithVal/OSCLock/main/preview.png)
 <p align="center">
 ⚠ Keep in mind bluetooth can be unreliable. BE SAFE  ⚠
 </p>
@@ -151,30 +150,6 @@ You can get the latest zip [from releases](https://gitlab.com/osclock/osclock/-/
 # Avatar Setup
 Avatar setup is decided by the user. You can use any of the readout modes to fit your avatar setup. A simple digital timer using readout mode 3 can be found on at https://zenithval.booth.pm/items/4892327
 
-
-# In app Controls
-| Value | Info                                            |
-|:----- | ----------------------------------------------- |
-| H     | Prints the help screen                          |
-| T     | Starts a new timer (If in timer mode)           |
-| S     | Prints the status of the app and lock           |
-| U     | Begins unlock process if available              |
-| Q     | Quits the application                           |
-| {     | Encrypts the application config with a password |
-| }     | Decrypts the application config with a password |
-
-<details><summary>Encryption</summary>
-
-This uses very basic encryption to obfuscate the config.toml and timer files. After pressing { in the app, you'll be prompted to enter a password. If encryption is enabled, the timer can not simply be ended early by deleting the timer files. Decryption will force end the current time. 
-
-A fun way to use this might be encrypting the app with a code you don't remember and giving it to someone you trust. Goes without saying, **only use this if you're confident and have confirmed it can open your lock and you're BEING SAFE.**
-
-It's hidden in the app interface but the { and } buttons still function. <br>
-
-</details>
-
-
-<br>
 
 # FAQ
 ### How safe is this?
