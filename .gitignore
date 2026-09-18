@@ -432,3 +432,10 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Never commit local credentials/state
+config.toml
+app.pass
+timer.start
+timer.end
+gui-debug.log

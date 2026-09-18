@@ -30,6 +30,17 @@ namespace OSCLock.Bluetooth
 			return ELookResult.Task;
 		}
 
+		public static void CancelScan()
+		{
+			try { deviceWatcher?.Stop(); } catch { }
+		}
+
+		// Console.Clear() throws when there is no real console attached (e.g. a WinExe GUI app).
+		private static void SafeConsoleClear()
+		{
+			try { Console.Clear(); } catch { }
+		}
+
 		private static async void OnDeviceUpdate(DeviceWatcher sender, DeviceInformationUpdate args)
 		{
 			try
@@ -38,7 +49,7 @@ namespace OSCLock.Bluetooth
 				if (args.Properties.TryGetValue("System.Devices.Aep.DeviceAddress", out deviceAddress) && deviceAddress.ToString().StartsWith(ESMARTLOCK_ADDR))
 				{
 					var bleDevice = await BluetoothLEDevice.FromIdAsync(args.Id);
-					var serviceResult = await bleDevice.GetGattServicesAsync();
+					var serviceResult = await bleDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
 					if (serviceResult.Status == GattCommunicationStatus.Success)
 					{
@@ -49,7 +60,7 @@ namespace OSCLock.Bluetooth
 							if (smartLock != null)
 							{
 								deviceWatcher.Stop();
-								Console.Clear();
+								SafeConsoleClear();
 								Console.WriteLine("Found smartlock!");
 								ELookResult.SetResult(smartLock);
 								return;
@@ -99,7 +110,7 @@ namespace OSCLock.Bluetooth
 					Console.WriteLine(deviceAddress);
 					Console.WriteLine(args.Name);
 					var bleDevice = await BluetoothLEDevice.FromIdAsync(args.Id);
-					var serviceResult = await bleDevice.GetGattServicesAsync();
+					var serviceResult = await bleDevice.GetGattServicesAsync(BluetoothCacheMode.Uncached);
 
 					if (serviceResult.Status == GattCommunicationStatus.Success)
 					{
@@ -110,7 +121,7 @@ namespace OSCLock.Bluetooth
 							if (smartLock != null)
 							{
 								deviceWatcher.Stop();
-								Console.Clear();
+								SafeConsoleClear();
 								Console.WriteLine("Found smartlock!");
 								ELookResult.SetResult(smartLock);
 								return;

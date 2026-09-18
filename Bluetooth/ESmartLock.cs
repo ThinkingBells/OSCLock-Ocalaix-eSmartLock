@@ -246,9 +246,7 @@ namespace OSCLock.Bluetooth
 			}
 			catch (Exception e)
 			{
-				//Console.WriteLine("Error while reading from device " + e, e);
-				Console.WriteLine(e);
-				Console.WriteLine("\n\nThere was an error which is usually expected but the lock should've opened. \nPlease let the creators know if it didn't!");
+				Console.WriteLine("Ignoring duplicate/late BLE notification (" + e.GetType().Name + ")");
 				CurrentPacket_TOTALSIZE = 0;
 				CurrentPacket_DATA = null;
 				DATA_LENGTH = 0;
@@ -294,7 +292,13 @@ namespace OSCLock.Bluetooth
 		{
 			try
 			{
-				var characteristicsResult = await service.GetCharacteristicsAsync();
+				var accessStatus = await service.RequestAccessAsync();
+				Console.WriteLine("GATT service RequestAccessAsync status: " + accessStatus);
+
+				var openStatus = await service.OpenAsync(GattSharingMode.SharedReadAndWrite);
+				Console.WriteLine("GATT service OpenAsync status: " + openStatus);
+
+				var characteristicsResult = await service.GetCharacteristicsAsync(BluetoothCacheMode.Uncached);
 				if (characteristicsResult.Status != GattCommunicationStatus.Success) throw new Exception("Failed to get characteristics, reason: " + characteristicsResult.Status);
 
 				var writeChar = characteristicsResult.Characteristics.FirstOrDefault(chr => chr.Uuid == WriteGUID) ?? throw new Exception("Failed to find write characteristic");

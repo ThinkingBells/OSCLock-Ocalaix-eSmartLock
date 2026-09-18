@@ -1,4 +1,31 @@
-# OSCLock
+# OSCLock-Ocalaix-eSmartLock
+
+This is a fork of [ZenithVal/OSCLock](https://github.com/ZenithVal/OSCLock), a great little tool for
+opening a Bluetooth LE ESmartLock-compatible lock from a Windows PC. All credit for the original app,
+protocol reverse-engineering, and OSC/VRChat integration goes to **ZenithVal** and prior contributors —
+this fork only adds a desktop GUI and a couple of Windows Bluetooth compatibility fixes on top of their
+work, and stays under the same GPLv3 license.
+
+## What this fork adds
+- **OSCLockGui.exe** — a small WPF app with a single "open" button, no console window.
+- Minimizes to the system tray instead of closing, with a right-click menu (open / show / exit).
+- A configurable **global keyboard shortcut** (e.g. Ctrl+M) that opens the lock from anywhere in
+  Windows, even while the app is minimized.
+- A settings window (⚙) to edit the eSmartLock cloud credentials, toggle "start with Windows" /
+  "start minimized", pick the hotkey, and switch the interface language (Català / English) — all
+  without hand-editing `config.toml`.
+- Config/log now live in `%LOCALAPPDATA%\Ocalaix`, so the app works even when installed somewhere
+  read-only for a normal user (e.g. `C:\Program Files\...`).
+- Two Bluetooth reliability fixes needed on some Windows 11 setups: explicit
+  `RequestAccessAsync`/`OpenAsync` + uncached GATT reads (fixes an `AccessDenied` error on
+  `GetCharacteristicsAsync`), and running the BLE scan off the WPF UI thread (the `DeviceWatcher`
+  callbacks were unreliable when awaited from an STA thread with a captured `SynchronizationContext`).
+
+The original console app (`OSCLock.exe`, with its OSC/VRChat timer modes) is unchanged and still
+buildable from this same source tree — see below for what it does.
+
+---
+
 An OSC timer app that can optionally unlock a bluetooth lock that uses the ESmartLock phone app. 
 <br> A simple use case might be throwing regular keys into a lockbox secured by the bluetooth lock. 
 
@@ -199,6 +226,10 @@ Want to:
 
 # Credits & Licenses
 
+- **Original OSCLock app, protocol work, and OSC/VRChat integration** by
+  [ZenithVal](https://github.com/ZenithVal) — [github.com/ZenithVal/OSCLock](https://github.com/ZenithVal/OSCLock).
+  This fork (the GUI, tray icon, hotkey, settings window, and Windows 11 Bluetooth fixes) is built
+  entirely on top of their work and released under the same GPLv3 license.
 - Prior programming before git history by @NeetCode 08/2022
 - SharpOSC | [MIT Liscense](https://github.com/tecartlab/SharpOSC/blob/master/License.txt)
 - OSCQuery | [MIT Liscense](https://github.com/vrchat-community/vrc-oscquery-lib/blob/main/License.md)
