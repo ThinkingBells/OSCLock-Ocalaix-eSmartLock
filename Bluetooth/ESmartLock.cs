@@ -48,9 +48,16 @@ namespace OSCLock.Bluetooth
 		{
 			if (isCloudSetup)
 			{
-				if (string.IsNullOrEmpty(ConfigManager.ApplicationConfig.ESmartConfig.DevicePassword))
+				var esmartConfig = ConfigManager.ApplicationConfig.ESmartConfig;
+				bool cachedForDifferentLock = !string.IsNullOrEmpty(esmartConfig.DevicePassword) && esmartConfig.DeviceMac != Id;
+
+				if (string.IsNullOrEmpty(esmartConfig.DevicePassword) || cachedForDifferentLock)
 				{
-					Console.WriteLine("Device password unknown, grabbing from api... logging in...");
+					if (cachedForDifferentLock)
+						Console.WriteLine("Cached device password belongs to a different lock (" + esmartConfig.DeviceMac + "), this one is " + Id + " - re-fetching from cloud");
+					else
+						Console.WriteLine("Device password unknown, grabbing from api... logging in...");
+
 					var loginToken = await ESmartLockAPI.Login();
 					if (loginToken.StartsWith("ERROR"))
 					{
@@ -65,7 +72,8 @@ namespace OSCLock.Bluetooth
 					}
 
 					Console.WriteLine("Retrived device password from cloud, saving it to config");
-					ConfigManager.ApplicationConfig.ESmartConfig.DevicePassword = devicePassword;
+					esmartConfig.DevicePassword = devicePassword;
+					esmartConfig.DeviceMac = Id;
 					ConfigManager.Save();
 				}
 

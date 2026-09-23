@@ -15,5 +15,9 @@ namespace OSCLock.Configs
 		[TomlProperty("device_password")]
 		[TomlInlineComment("The password to the device, gotten from the cloud after a successful login.")]
 		public string DevicePassword { get; set; }
+
+		[TomlProperty("device_mac")]
+		[TomlInlineComment("BLE MAC address device_password belongs to. If the lock is swapped for a different one, the password is re-fetched from the cloud automatically.")]
+		public string DeviceMac { get; set; }
 	}
 }

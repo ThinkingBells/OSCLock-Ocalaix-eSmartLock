@@ -20,6 +20,11 @@ work, and stays under the same GPLv3 license.
   `RequestAccessAsync`/`OpenAsync` + uncached GATT reads (fixes an `AccessDenied` error on
   `GetCharacteristicsAsync`), and running the BLE scan off the WPF UI thread (the `DeviceWatcher`
   callbacks were unreliable when awaited from an STA thread with a captured `SynchronizationContext`).
+- Cloud password handling fixes: the cached `device_password` is now tied to the lock's MAC address,
+  so swapping the physical lock for a different one is detected automatically and the password is
+  re-fetched instead of silently reusing the old lock's (wrong) passcode; a failed cloud API response
+  is no longer cached as if it were a real password; and if the cloud fetch fails outright, the app
+  now tries the factory default `123456` as a last resort before giving up.
 
 ---
 
@@ -46,6 +51,24 @@ work, and stays under the same GPLv3 license.
   branding). Well tested with [this lock](https://amzn.to/3JAGxmm); also reported to work with
   [EseeSmart](https://amzn.to/3PuaTuo), [ELinkSmart](https://amzn.to/3ra1NsM),
   [Pothunder](https://amzn.to/3r1EJfv), and [Dhiedas](https://amzn.to/46t4xBC).
+
+### Replacing the physical lock
+If you swap the lock for a different one (even the same model), OSCLock now detects the lock's
+MAC address changed and automatically re-fetches its password from the cloud instead of reusing
+the old lock's cached one — no manual cleanup of `config.toml` needed.
+
+If the cloud fetch itself fails (e.g. the app shows `"No s'ha trobat el pany"`/unlock never
+succeeds and the log shows an API error like `"invalid login"` even though your username/password
+are correct), and the **official eSmartLock app can open the lock fine**, the lock's cloud binding
+is likely in a bad state on the vendor's server. What fixed it for us:
+1. In the official app, remove/unpair the lock from your account.
+2. Factory-reset the lock (check its manual — usually a button combo) and add it back through
+   the official app as if it were new.
+3. Try OSCLockGui again.
+
+As a safety net, if the cloud password can't be retrieved at all, the app now also tries the
+factory default password `123456` before giving up — this can open a lock that was never actually
+given a custom passcode even while its firmware reports "bound to cloud".
 
 ---
 
