@@ -53,12 +53,15 @@ namespace OSCLock.Bluetooth
 					Console.WriteLine("Device password unknown, grabbing from api... logging in...");
 					var loginToken = await ESmartLockAPI.Login();
 					if (loginToken.StartsWith("ERROR"))
-						return "ERROR_NO_PASS";
+					{
+						Console.WriteLine("Cloud login failed (" + loginToken + "), falling back to default password 123456");
+						return "123456";
+					}
 					var devicePassword = await ESmartLockAPI.GetDevicePassword(Id, loginToken);
 					if (devicePassword.StartsWith("ERROR"))
 					{
-						Console.WriteLine("Failed to retrieve device password from cloud: " + devicePassword);
-						return "ERROR_NO_PASS";
+						Console.WriteLine("Failed to retrieve device password from cloud: " + devicePassword + ", falling back to default password 123456");
+						return "123456";
 					}
 
 					Console.WriteLine("Retrived device password from cloud, saving it to config");
