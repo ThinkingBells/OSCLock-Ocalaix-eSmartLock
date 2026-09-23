@@ -55,8 +55,11 @@ namespace OSCLock.Bluetooth
 					if (loginToken.StartsWith("ERROR"))
 						return "ERROR_NO_PASS";
 					var devicePassword = await ESmartLockAPI.GetDevicePassword(Id, loginToken);
-					if (loginToken.StartsWith("ERROR"))
+					if (devicePassword.StartsWith("ERROR"))
+					{
+						Console.WriteLine("Failed to retrieve device password from cloud: " + devicePassword);
 						return "ERROR_NO_PASS";
+					}
 
 					Console.WriteLine("Retrived device password from cloud, saving it to config");
 					ConfigManager.ApplicationConfig.ESmartConfig.DevicePassword = devicePassword;
